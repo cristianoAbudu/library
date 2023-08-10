@@ -1,0 +1,80 @@
+sudo yum update
+
+sudo yum search docker
+
+sudo yum info docker
+
+sudo usermod -a -G docker ec2-user
+
+id ec2-user
+
+newgrp docker
+
+sudo systemctl enable docker.service
+
+sudo systemctl start docker.service
+
+
+sudo su
+docker version
+systemctl start docker
+docker images
+docker pull mysql:8
+docker images
+mkdir docker
+mkdir docker/mysql
+mkdir docker/mysql/conf
+mkdir docker/mysql/data
+
+docker run -d -p 3306:3306 \
+-v /home/ec2-user/docker/mysql/conf/:/etc/mysql/conf.d \
+-v /home/ec2-user/docker/mysql/data/:/var/lib/mysql \
+-e MYSQL_ROOT_PASSWORD=12345678 \
+--name docker_mysql 54150e9955c4
+
+docker ps 
+
+
+docker exec -it docker_mysql bash
+
+mysql -u root -p
+
+create database test;
+
+scp -i /Users/jovemTranquilao/Downloads/mac.pem docker-compose.yml ec2-user@ec2-18-217-67-196.us-east-2.compute.amazonaws.com:~
+
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+sudo chmod +x /usr/local/bin/docker-compose
+
+mkdir docker-compose
+
+chmod 777 docker-compose
+
+mv docker-compose.yml docker-compose
+
+cd docker-compose
+
+sudo nano /etc/systemd/system/docker-compose.service
+
+[Unit]
+Description=Docker Compose Service
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+WorkingDirectory=/home/ec2-user/docker-compose/
+ExecStart=/usr/local/bin/docker-compose up -d
+
+[Install]
+WantedBy=multi-user.target
+
+
+sudo systemctl daemon-reload
+
+sudo systemctl start docker-compose.service
+sudo systemctl enable docker-compose.service
+
+​VOUCHER TRANQUILAO: AWLA276F0E59
+
