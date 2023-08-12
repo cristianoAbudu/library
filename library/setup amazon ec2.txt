@@ -4,6 +4,8 @@ sudo yum search docker
 
 sudo yum info docker
 
+ sudo yum install docker
+
 sudo usermod -a -G docker ec2-user
 
 id ec2-user
@@ -26,20 +28,32 @@ mkdir docker/mysql
 mkdir docker/mysql/conf
 mkdir docker/mysql/data
 
+docker images
+
+
 docker run -d -p 3306:3306 \
 -v /home/ec2-user/docker/mysql/conf/:/etc/mysql/conf.d \
 -v /home/ec2-user/docker/mysql/data/:/var/lib/mysql \
 -e MYSQL_ROOT_PASSWORD=12345678 \
---name docker_mysql 54150e9955c4
+--name docker_mysql 99afc808f15b
 
 docker ps 
-
 
 docker exec -it docker_mysql bash
 
 mysql -u root -p
 
 create database test;
+
+exit
+
+exit
+
+mkdir docker-compose
+
+chmod 777 docker-compose
+
+sudo nano /home/ec2-user/docker-compose/docker-compose.yml
 
 version: '3'
 services:
@@ -54,18 +68,9 @@ services:
     ports:
       - "3306:3306"
 
-
-scp -i /Users/jovemTranquilao/Downloads/mac.pem docker-compose.yml ec2-user@ec2-18-217-67-196.us-east-2.compute.amazonaws.com:~
-
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
 sudo chmod +x /usr/local/bin/docker-compose
-
-mkdir docker-compose
-
-chmod 777 docker-compose
-
-mv docker-compose.yml docker-compose
 
 cd docker-compose
 
@@ -91,4 +96,51 @@ sudo systemctl start docker-compose.service
 sudo systemctl enable docker-compose.service
 
 ​VOUCHER TRANQUILAO: AWLA276F0E59
+
+scp -i /Users/jovemTranquilao/mac.pem /Users/jovemTranquilao/git/crudColaboradorBackend/findAllMicroservice/target/findAllMicroservice-0.0.1-SNAPSHOT.jar ec2-user@ec2-3-144-15-93.us-east-2.compute.amazonaws.com:~
+
+mkdir microservice
+
+chmod 777 microservice
+
+mv findAllMicroservice-0.0.1-SNAPSHOT.jar microservice/
+
+cd microservice
+
+sudo yum install java
+
+java -version
+
+sudo nano /home/ec2-user/microservice/start_my_app.sh
+
+sudo java -jar /home/ec2-user/microservice/findAllMicroservice-0.0.1-SNAPSHOT.jar 
+
+sudo chmod +x /home/ec2-user/microservice/start_my_app.sh
+
+sudo nano /etc/systemd/system/myapp.service
+
+[Unit]
+Description=My Java Application
+After=network.target
+
+[Service]
+Type=simple
+User=ec2-user
+WorkingDirectory=/home/ec2-user/microservice
+ExecStart=/home/ec2-user/microservice/start_my_app.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl daemon-reload
+
+sudo systemctl start myapp.service
+
+sudo journalctl -u myapp -o cat
+
+scp -i /Users/jovemTranquilao/mac.pem /Users/jovemTranquilao/git/crudColaboradorBackend/findOneMicroservice/target/findOneMicroservice-0.0.1-SNAPSHOT.jar ec2-user@ec2-3-139-103-205.us-east-2.compute.amazonaws.com:~
+
+mv findOneMicroservice-0.0.1-SNAPSHOT.jar microservice
+
 
