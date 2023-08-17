@@ -113,6 +113,7 @@ java -version
 
 sudo nano /home/ec2-user/microservice/start_my_app.sh
 
+#!/bin/sh
 sudo java -jar /home/ec2-user/microservice/findAllMicroservice-0.0.1-SNAPSHOT.jar 
 
 sudo chmod +x /home/ec2-user/microservice/start_my_app.sh
@@ -126,7 +127,7 @@ After=network.target
 [Service]
 Type=simple
 User=ec2-user
-WorkingDirectory=/home/ec2-user/microservice
+WorkingDirectory=/home/ec2-user/microservice/
 ExecStart=/home/ec2-user/microservice/start_my_app.sh
 Restart=always
 
@@ -137,6 +138,8 @@ sudo systemctl daemon-reload
 
 sudo systemctl start myapp.service
 
+sudo systemctl enable myapp.service
+
 sudo journalctl -u myapp -o cat
 
 scp -i /Users/jovemTranquilao/mac.pem /Users/jovemTranquilao/git/crudColaboradorBackend/findOneMicroservice/target/findOneMicroservice-0.0.1-SNAPSHOT.jar ec2-user@ec2-3-139-103-205.us-east-2.compute.amazonaws.com:~
@@ -144,3 +147,55 @@ scp -i /Users/jovemTranquilao/mac.pem /Users/jovemTranquilao/git/crudColaborador
 mv findOneMicroservice-0.0.1-SNAPSHOT.jar microservice
 
 
+
+Nícolas Wildner
+​systemd "status=203/EXEC" -> script com caminho errado, script sem permissão de execução, falta shebang no script, shebang do script aponta pra um interpretador errado, etc
+
+Nícolas Wildner
+​foi o que apareceu na última execuçao lá
+
+
+Nícolas Wildner
+​shebang é o cabeçalho, tipo o #/bin/bash ou #/usr/bin/python, etc
+
+Ricky
+​No arquivo de configuração de serviço, coloca / no final do diretório e no script troca #!/bin/bash por #!/bin/sh, já as permissões tá bagunçado por usar sudo e o user default ec2...
+
+sudo nano /home/ec2-user/microservice/Dockerfile
+
+FROM openjdk:17-oracle
+WORKDIR /
+ADD findOneMicroservice-0.0.1-SNAPSHOT.jar findOneMicroservice-0.0.1-SNAPSHOT.jar
+EXPOSE 8082
+CMD java -jar findOneMicroservice-0.0.1-SNAPSHOT.jar
+
+docker build -t findone .
+
+docker images
+
+
+cd /home/ec2-user/microservice/
+java -jar findOneMicroservice-0.0.1-SNAPSHOT.jar 
+
+
+scp -i /Users/jovemTranquilao/mac.pem /Users/jovemTranquilao/Downloads/associaSubordinadoMicroservice-0.0.1-SNAPSHOT.jar ec2-user@ec2-18-220-67-119.us-east-2.compute.amazonaws.com:~
+
+scp -i /Users/jovemTranquilao/mac.pem /Users/jovemTranquilao/Downloads/findAllMicroservice-0.0.1-SNAPSHOT.jar ec2-user@ec2-18-220-67-119.us-east-2.compute.amazonaws.com:~
+
+scp -i /Users/jovemTranquilao/mac.pem /Users/jovemTranquilao/Downloads/saveMicroservice-0.0.1-SNAPSHOT.jar ec2-user@ec2-18-118-210-50.us-east-2.compute.amazonaws.com:~
+
+
+mv associaSubordinadoMicroservice-0.0.1-SNAPSHOT.jar microservice
+
+mv findAllMicroservice-0.0.1-SNAPSHOT.jar microservice
+
+mv saveMicroservice-0.0.1-SNAPSHOT.jar microservice
+
+save / mysql -> http://18.116.119.23/
+findall -> 3.140.90.70
+
+----- CONFIG DA SEGUNDA INSTANCIA (findAllMicroservice)
+
+scp -i /Users/jovemTranquilao/mac2.pem /Users/jovemTranquilao/Downloads/findAllMicroservice-0.0.1-SNAPSHOT.jar ec2-user@ec2-3-140-90-70.us-east-2.compute.amazonaws.com:~
+
+sudo yum install java
