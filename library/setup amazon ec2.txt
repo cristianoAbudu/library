@@ -194,8 +194,17 @@ mv saveMicroservice-0.0.1-SNAPSHOT.jar microservice
 save / mysql -> http://18.116.119.23/
 findall -> 3.140.90.70
 
+ssh -i "mac.pem" ec2-user@ec2-18-116-119-23.us-east-2.compute.amazonaws.com
+
+ssh -i "mac2.pem" ec2-user@ec2-3-140-90-70.us-east-2.compute.amazonaws.com
+
 ----- CONFIG DA SEGUNDA INSTANCIA (findAllMicroservice)
 
 scp -i /Users/jovemTranquilao/mac2.pem /Users/jovemTranquilao/Downloads/findAllMicroservice-0.0.1-SNAPSHOT.jar ec2-user@ec2-3-140-90-70.us-east-2.compute.amazonaws.com:~
 
-sudo yum install java
+scp -i /Users/jovemTranquilao/mac2.pem /Users/jovemTranquilao/Downloads/findAllMicroservice-0.0.1-SNAPSHOT.jar ec2-user@ec2-18-218-192-200.us-east-2.compute.amazonaws.com:~
+
+
+sudo yum install java -y
+
+
